@@ -11,10 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { BriefcaseBusiness } from "lucide-react";
+import Stepper from "../steps";
 
 export default function JobRole() {
   return (
-    <main className="flex items-center justify-center h-screen">
+    <main className="flex flex-col space-y-8 items-center justify-center h-screen">
+      <Stepper step={2} />
       <Card className="mx-auto w-full max-w-lg">
         <CardHeader>
           <CardTitle className="text-2xl flex items-center gap">
@@ -34,7 +36,7 @@ export default function JobRole() {
                 placeholder="Paste your job description here"
               />
               <Link href="/onboarding/schedule">
-              <Button className="w-full">Next</Button>
+                <Button className="w-full">Next</Button>
               </Link>
             </div>
           </div>
