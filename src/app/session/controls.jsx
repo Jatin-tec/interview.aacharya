@@ -4,7 +4,7 @@ import { Bug, MessageCircleQuestion, Mic, Volume2Icon } from "lucide-react";
 export default function Controls() {
   return (
     <div className="flex flex-col  items-center justify-center mx-10 max-h-[200px] space-y-6">
-      <div className="flex flex-col gap rounded-lg shadow-lg border border-slate-400 text-slate-800 p-3">
+      <div className="flex flex-col gap rounded-lg shadow-lg border border-slate-400 p-3">
         <span className="text-xl font-bold">Question: 1</span>
         <span className="text-sm max-h-28 overflow-y-scroll">
           Here is the full question Lorem ipsum dolor sit amet, consectetur

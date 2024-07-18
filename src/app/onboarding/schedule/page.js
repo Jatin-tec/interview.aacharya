@@ -37,6 +37,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Stepper from "../page";
 
 export default function Schedule() {
   const [date, setDate] = React.useState();
@@ -72,7 +73,8 @@ export default function Schedule() {
   };
 
   return (
-    <main className="flex items-center justify-center h-screen">
+    <main className="flex flex-col space-y-8 items-center justify-center h-screen">
+      <Stepper step={3} />
       <Card className="mx-auto w-full max-w-lg">
         <CardHeader>
           <CardTitle className="text-2xl flex items-center gap-2">
@@ -91,7 +93,7 @@ export default function Schedule() {
                   variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
+                    !date && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
