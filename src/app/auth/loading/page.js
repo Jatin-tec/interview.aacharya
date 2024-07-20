@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from "@/context/auth-provider";
 import axios from "axios";
 import "./index.css";
 
@@ -8,7 +9,7 @@ const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
 const SocialAuth = () => {
   let location = useSearchParams();
-  console.log("location", location);
+  const { login } = useAuth();
   
   const [error, setError] = useState("");
   const router = useRouter();
@@ -25,7 +26,6 @@ const SocialAuth = () => {
     try {
           const res = await axios.get(`${BACKEND_API_URL}/api/auth/login/google/?code=${code}`)
           console.log("res", res)
-          localStorage.setItem("goggleFirstName", res.data.user.first_name)
           return res.data;
       } catch (err) {
           console.log("error", err);
@@ -35,7 +35,11 @@ const SocialAuth = () => {
 
   const onGogglelogin = async () => {
     const response = await googleLoginHandler(location.get('code'))
-    console.log(response)
+    if (response) {
+      login(response);
+    } else {
+      setError("Something went wrong");
+    }
   }
 
   return (

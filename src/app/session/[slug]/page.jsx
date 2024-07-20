@@ -22,7 +22,7 @@ import { useTheme } from "next-themes";
 
 export default function SessionJoin({ params }) {
 
-  const code = params.slug.split("-");
+  const code = params.slug.match(/.{1,3}/g) || [];
   if (code.length !== 3 || code.some(part => part.length !== 3 || !/^[a-zA-Z0-9]+$/.test(part))) {
     return <div>Invalid code format</div>;
   }

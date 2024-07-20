@@ -43,7 +43,7 @@ export default function SessionJoin() {
             <Button>
               <Link
                 className="flex gap-1.5 items-center"
-                href="/onboarding/resume"
+                href="/onboarding"
               >
                 <CirclePlus /> New Interview
               </Link>
