@@ -41,8 +41,8 @@ export default function SessionJoin() {
   return (
     <div className="h-screen w-full">
       <HeaderMain />
-      <main className="grid grid-cols-2 md:grid-cols-3 items-center h-[90%]">
-        <div className="flex flex-col col-span-2 items-start justify-start gap-2 px-40">
+      <main className="grid grid-cols-2 md:grid-cols-3 items-center h-[90%] px-20">
+        <div className="flex flex-col col-span-2 items-start justify-start gap-2">
           <h1 className="text-3xl font-bold text-center">
             Interviews for everyone at your convinience.
           </h1>
@@ -79,7 +79,7 @@ export default function SessionJoin() {
               <Link href="/session/tech">Join</Link>
             </Button>
           </div>
-          <Separator className="w-[80%] mt-6 mb-4" />
+          <Separator className="w-[70%] mt-6 mb-4" />
           <span className="text-xl font-bold">Upcoming Interviews</span>
           <Carousel>
             <CarouselContent>
@@ -117,14 +117,14 @@ export default function SessionJoin() {
             </Link>
           </p>
         </div>
-        <div className="justify-center flex flex-col col-span-1 w-[400px]">
+        <div className="justify-center flex flex-col col-span-1">
           <iframe
             className="h-60 dark:bg-transparent"
             src="https://lottie.host/embed/30a8c054-62b2-4f2d-99a6-24c0eeef8b08/EOzWQUPW9R.json"
           />
           <Carousel
             plugins={[plugin.current]}
-            className=""
+            className="text-center font-bold bg-black text-white dark:bg-white dark:text-black p-4 rounded-full"
             onMouseEnter={plugin.current.stop}
             onMouseLeave={plugin.current.reset}
           >
