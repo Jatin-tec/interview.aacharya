@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FileText } from "lucide-react";
-import Stepper from "../steps";
+import Stepper from "../page";
 import { HeaderMain } from "@/components/header";
 
 export default function Resume() {

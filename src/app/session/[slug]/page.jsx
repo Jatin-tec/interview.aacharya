@@ -10,7 +10,6 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
-
 import { CirclePlus } from "lucide-react";
 import {
   Carousel,
@@ -21,7 +20,15 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
-export default function SessionJoin() {
+export default function SessionJoin({ params }) {
+
+  const code = params.slug.match(/.{1,3}/g) || [];
+  if (code.length !== 3 || code.some(part => part.length !== 3 || !/^[a-zA-Z0-9]+$/.test(part))) {
+    return <div>Invalid code format</div>;
+  }
+
+  const [value, setValue] = React.useState(code.join(""));
+
   const plugin = React.useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true }),
   );
@@ -43,7 +50,7 @@ export default function SessionJoin() {
             <Button>
               <Link
                 className="flex gap-1.5 items-center"
-                href="/onboarding"
+                href="/onboarding/resume"
               >
                 <CirclePlus /> New Interview
               </Link>
@@ -52,6 +59,8 @@ export default function SessionJoin() {
             <InputOTP 
               maxLength={9}
               pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+              value={value}
+              onChange={setValue}
             >
               <InputOTPGroup>
                 <InputOTPSlot index={0} />

@@ -37,7 +37,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Stepper from "../steps";
+import Stepper from "../page";
 
 export default function Schedule() {
   const [date, setDate] = React.useState();

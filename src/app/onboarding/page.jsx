@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import Stepper from "../steps";
+import Stepper from "@/components/stepper";
 import {
   Dialog,
   DialogContent,
@@ -37,24 +37,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import confetti from "canvas-confetti";
+import useAxios from "@/context/useAxios";
 
 export default function MultiStepForm() {
   const [step, setStep] = useState(1);
   const [resume, setResume] = useState(null);
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(new Date());
   const [interviewType, setInterviewType] = useState("tech");
+  const { loading, error, fetchApi } = useAxios();
 
-  const handleNextStep = () => {
-    setStep((prevStep) => prevStep + 1);
-  };
+  const handleNextStep = async () => {
+    setStep((prevStep) => prevStep + 1)
+  }
 
   const handlePreviousStep = () => {
     setStep((prevStep) => prevStep - 1);
   };
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     const end = Date.now() + 3 * 1000; // 3 seconds
     const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
 
@@ -80,8 +82,31 @@ export default function MultiStepForm() {
 
       requestAnimationFrame(frame);
     };
+    
+    if (!resume || !companyName || !jobDescription || !date || !interviewType) {
+      return
+    }
+    
+    const formData = new FormData()
+    formData.append("resume", resume)
+    formData.append("company_name", companyName)
+    formData.append("job_description", jobDescription)
+    formData.append("interview_date", new Date(date).toISOString())
+    formData.append("interview_type", interviewType)
 
-    frame();
+    const apiParams = {
+      url: "/interview/schedule/",
+      method: "POST",
+      body: formData,
+    };
+
+    console.log("apiParams", apiParams)
+
+    const response = await fetchApi(apiParams)
+
+    if (!error && response.status === 201) {
+      frame()
+    }
   };
 
   return (
@@ -192,7 +217,7 @@ export default function MultiStepForm() {
                       <Calendar
                         mode="single"
                         selected={date}
-                        onSelect={setDate}
+                        onSelect={(date) => setDate(date)}
                         initialFocus
                       />
                     </PopoverContent>
@@ -202,15 +227,15 @@ export default function MultiStepForm() {
                     onValueChange={setInterviewType}
                   >
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hr" id="r1" />
+                      <RadioGroupItem value="HR" id="r1" />
                       <Label htmlFor="r1">HR Round</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="tech" id="r2" />
+                      <RadioGroupItem value="Technical" id="r2" />
                       <Label htmlFor="r2">Tech/Coding Round</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="mr" id="r3" />
+                      <RadioGroupItem value="Managerial" id="r3" />
                       <Label htmlFor="r3">MR Round</Label>
                     </div>
                   </RadioGroup>
@@ -221,27 +246,20 @@ export default function MultiStepForm() {
                   Back
                 </Button>
                 <Dialog>
-                  <DialogTrigger>
-                    <Button
-                      onClick={handleSchedule}
-                      className="w-[220px] gap-2"
-                    >
-                      <TicketPlus />
+                  <DialogTrigger asChild>
+                    <Button className="w-1/2 ml-2" onClick={handleSchedule}>
                       Schedule
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Confirmation!</DialogTitle>
+                      <DialogTitle>Interview Scheduled</DialogTitle>
                       <DialogDescription>
-                        <iframe
-                          className="w-28 h-28"
-                          src="https://lottie.host/embed/9dcee1be-d8e0-47c7-b5b7-bd901c7e217d/TeygC2mSFW.lottie"
-                        ></iframe>
-                        Your interview has been scheduled. We will send you the
-                        magic link with all the details.
+                        Congrats! We have scheduled your interview and sent you
+                        a magic link via email.
                       </DialogDescription>
                     </DialogHeader>
+                    <Button>Complete</Button>
                   </DialogContent>
                 </Dialog>
               </div>

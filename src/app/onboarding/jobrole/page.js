@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { BriefcaseBusiness } from "lucide-react";
-import Stepper from "../steps";
+import Stepper from "../page";
 
 export default function JobRole() {
   return (

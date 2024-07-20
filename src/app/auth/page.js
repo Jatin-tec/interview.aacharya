@@ -1,5 +1,5 @@
-import Link from "next/link";
-
+"use client"
+import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +9,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+const REACT_APP_GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+const REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT = process.env.NEXT_PUBLIC_GOGGLE_REDIRECT_URL_ENDPOINT
+
 export default function Auth() {
+  const openGoogleLoginPage = useCallback(() => {
+    const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    
+    const scope = [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ].join(" ");
+
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: REACT_APP_GOOGLE_CLIENT_ID,
+      redirect_uri: `${REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT}/auth/loading`,
+      prompt: "select_account",
+      access_type: "offline",
+      scope,
+    });
+
+    const url = `${googleAuthUrl}?${params}`;
+    window.location.href = url;
+  }, []);
+
+  const handleLogin = async () => {
+    openGoogleLoginPage()
+  };
+  
   return (
     <main className="flex items-center justify-center h-screen">
       <Card className="mx-auto w-full max-w-lg">
@@ -19,7 +47,7 @@ export default function Auth() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            <Button variant="outline" className="w-full gap-4">
+            <Button variant="outline" className="w-full gap-4" onClick={handleLogin}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 x="0px"
