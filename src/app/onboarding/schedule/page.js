@@ -38,6 +38,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Stepper from "../page";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 
 export default function Schedule() {
   const [date, setDate] = React.useState();
@@ -87,28 +88,7 @@ export default function Schedule() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground",
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <DateTimePicker />
             <RadioGroup defaultValue="tech">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="hr" id="r1" />
