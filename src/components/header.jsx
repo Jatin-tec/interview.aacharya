@@ -56,6 +56,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "./ui/textarea";
+import TestSetting from "./testSetting";
 
 export function HeaderMain() {
   const { setTheme } = useTheme();
@@ -121,92 +122,8 @@ export function HeaderMain() {
           </SheetContent>
         </Sheet>
 
-        {/* Test Mic/Cam Settings */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full ml-auto flex-1 sm:flex-initial"
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Settings</DialogTitle>
-              <DialogDescription>
-                Please allow audio and video permissions to start the interview.
-                Also check the camera and microphone settings before starting.
-              </DialogDescription>
-            </DialogHeader>
-
-            <Tabs defaultValue="audio" className="h-[200px]">
-              <TabsList>
-                <TabsTrigger value="audio">Audio</TabsTrigger>
-                <TabsTrigger value="video">Video</TabsTrigger>
-              </TabsList>
-              <TabsContent value="audio">
-                <Label
-                  className="m-1 flex items-center text-sm text-muted-foreground"
-                  htmlFor="mic"
-                >
-                  <Mic className="w-4 h-4" /> Microphone
-                </Label>
-                <Select id="mic">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Microphone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="m1">Built-in Audio</SelectItem>
-                    <SelectItem value="m2">Monitor Audio</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Label
-                  className="m-1 flex items-center text-sm mt-2 text-muted-foreground"
-                  htmlFor="speaker"
-                >
-                  <Speaker className="h-4 w-4" /> Speaker
-                </Label>
-                <div className="grid grid-cols-2 items-center gap-5">
-                  <Select id="speaker">
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select Speaker" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="s11">Built-in Speaker</SelectItem>
-                      <SelectItem value="s2">Headphone</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button variant="secondary" className="w-fit rounded-full">
-                    Test
-                  </Button>
-                </div>
-              </TabsContent>
-              <TabsContent value="video">
-                <Label
-                  className="m-1 flex items-center text-sm text-muted-foreground"
-                  htmlFor="cam"
-                >
-                  <Camera className="w-4 h-4 mr-1" /> Camera
-                </Label>
-                <Select id="cam">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Camera" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="c1">Built-in Camera</SelectItem>
-                    <SelectItem value="c2">Wifi Camera</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="flex items-center justify-center text-xs mt-4 w-28 h-20 rounded-md bg-zinc-800 animate-pulse">
-                  Video
-                </div>
-              </TabsContent>
-            </Tabs>
-          </DialogContent>
-        </Dialog>
+        {/* Cam Audio Test Setting */}
+        <TestSetting />
 
         {/* Theme Toggle */}
         <DropdownMenu>
