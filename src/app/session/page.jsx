@@ -24,19 +24,34 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import {
   Card,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import useAxios from "@/context/useAxios";
 
-export default function SessionJoin() {
+function SessionJoin() {
   const plugin = React.useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true }),
   );
-
   const { setTheme } = useTheme();
+  const { loading, error, fetchApi } = useAxios();
+
+  const [upcommingInterviews, setUpcommingInterviews] = React.useState([]);
+
+
+  React.useEffect(() => {
+    const apiParams = {
+      url: "/interview/schedule/",
+      method: "GET",
+    }
+    fetchApi(apiParams).then((res) => {
+      if (res.status === 200) {
+        setUpcommingInterviews(res.data)
+      }
+    })
+  }, []);
+
 
   return (
     <div className="h-screen w-full">
@@ -83,20 +98,22 @@ export default function SessionJoin() {
           <span className="text-xl font-bold">Upcoming Interviews</span>
           <Carousel>
             <CarouselContent>
-              <CarouselItem>
-                <Card className="bg-accent">
-                  <CardHeader>
-                    <CardTitle>Google | Tech Round</CardTitle>
-                    <CardDescription>
-                      Software Development Engineer
-                      <p className="text-sm font-semibold my-2 rounded-md">
-                        Date: 15, August 2024 | Time: 02:34 PM
-                      </p>
-                      <Button>Start</Button>
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </CarouselItem>
+              {upcommingInterviews && upcommingInterviews.map((interview) => (
+                <CarouselItem>
+                  <Card className="bg-accent">
+                    <CardHeader>
+                      <CardTitle>{ interview.company_name } | { interview.interview_type } Round</CardTitle>
+                      <CardDescription>
+                        { interview.job_title }
+                        <p className="text-sm font-semibold my-2 rounded-md">
+                          Date: 15, August 2024 | Time: 02:34 PM
+                        </p>
+                        <Button>Start</Button>
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </CarouselItem>
+              ))}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
@@ -133,3 +150,5 @@ export default function SessionJoin() {
     </div>
   );
 }
+
+export default SessionJoin
