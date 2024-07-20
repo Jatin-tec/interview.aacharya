@@ -9,17 +9,27 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 
 import { CirclePlus } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function SessionJoin() {
   const plugin = React.useRef(
@@ -41,18 +51,12 @@ export default function SessionJoin() {
           </p>
           <div className="flex flex-row items-center gap-2 mt-8">
             <Button>
-              <Link
-                className="flex gap-1.5 items-center"
-                href="/onboarding"
-              >
+              <Link className="flex gap-1.5 items-center" href="/onboarding">
                 <CirclePlus /> New Interview
               </Link>
             </Button>
             <p className="mx-2">or</p>
-            <InputOTP 
-              maxLength={9}
-              pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-            >
+            <InputOTP maxLength={9} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
               <InputOTPGroup>
                 <InputOTPSlot index={0} />
                 <InputOTPSlot index={1} />
@@ -76,6 +80,28 @@ export default function SessionJoin() {
             </Button>
           </div>
           <Separator className="w-[80%] mt-6 mb-4" />
+          <span className="text-xl font-bold">Upcoming Interviews</span>
+          <Carousel>
+            <CarouselContent>
+              <CarouselItem>
+                <Card className="bg-accent">
+                  <CardHeader>
+                    <CardTitle>Google | Tech Round</CardTitle>
+                    <CardDescription>
+                      Software Development Engineer
+                      <p className="text-sm font-semibold my-2 rounded-md">
+                        Date: 15, August 2024 | Time: 02:34 PM
+                      </p>
+                      <Button>Start</Button>
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+
           <p className="text-sm">
             Learn more about{" "}
             <Link className="underline text-slate-600" href="#">

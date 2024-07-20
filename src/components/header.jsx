@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import CurrentDateTime from "./current-time";
+import Notification from "./notification";
 import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import {
@@ -150,6 +151,7 @@ export function HeaderMain() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Notification />
 
         {/* User Menu */}
         <DropdownMenu>
