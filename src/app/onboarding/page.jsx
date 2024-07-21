@@ -38,11 +38,13 @@ import {
 } from "@/components/ui/dialog";
 import confetti from "canvas-confetti";
 import useAxios from "@/context/useAxios";
+import { useToast } from "@/components/ui/use-toast"
+
 
 export default function MultiStepForm() {
+  const [resume, setResume] = useState(null);
   const [formState, setFormState] = useState({
     step: 1,
-    resume: null,
     company_name: '',
     job_title: '',
     job_description: '',
@@ -59,13 +61,36 @@ export default function MultiStepForm() {
 
   const { error, fetchApi } = useAxios()
 
+  const { toast } = useToast()
+
   const handleNextStep = async () => {
+    if (!formValidator()) return
     handleChange({ target: { name: "step", value: formState.step + 1 } })
   }
 
   const handlePreviousStep = () => {
     handleChange({ target: { name: "step", value: formState.step - 1 } })
   };
+
+  const formValidator = () => {
+    if (formState.step === 1 && !resume) {
+      toast({
+        variant: "destructive",
+        title: "Missing required fields",
+        description: "Please upload your resume",
+      });
+      return false
+    }
+    if (formState.step === 2 && !formState.company_name && !formState.job_title && !formState.job_description) {
+      toast({
+        variant: "destructive",
+        title: "Missing required fields",
+        description: "Please fill all the fields",
+      });
+      return false
+    }
+    return true
+  }
 
   const handleSchedule = async () => {
     const end = Date.now() + 3 * 1000; // 3 seconds
@@ -92,21 +117,19 @@ export default function MultiStepForm() {
       requestAnimationFrame(frame);
     };
 
-    if (!formState.resume) {
-      alert("Please upload your resume");
-      return;
-    }
-
     const formData = new FormData()
-    
+    formData.append("resume", resume)
+    formData.append("company_name", formState.company_name)
+    formData.append("job_title", formState.job_title)
+    formData.append("job_description", formState.job_description)
+    formData.append("interview_date", new Date(formState.interview_date).toISOString())
+    formData.append("interview_type", formState.interview_type)
 
     const apiParams = {
       url: "/interview/schedule/",
       method: "POST",
       body: formData,
     };
-
-    console.log("apiParams", apiParams)
 
     const response = await fetchApi(apiParams)
 
@@ -140,7 +163,7 @@ export default function MultiStepForm() {
                       name="resume"
                       type="file"
                       className="cursor-pointer"
-                      onChange={handleChange}
+                      onChange={(e) => setResume(e.target.files[0])}
                     />
                   </div>
                   <Button className="w-full gap-4" onClick={handleNextStep}>

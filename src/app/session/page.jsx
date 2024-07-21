@@ -113,9 +113,12 @@ function SessionJoin() {
                             <CirclePlay className="w-4 h-4 mr-1" />
                             Start
                           </Button>
-                          <Button className="w-1/2" variant="outline">
-                            <CalendarClock className="w-4 h-4 mr-1" /> Reshedule
-                          </Button>
+                          <Link href={`/profile/reschedule/${interview.interview_code}`}>
+                            <Button className="w-1/2" variant="outline" >
+                              <CalendarClock className="w-4 h-4 mr-1" />
+                              Reshedule
+                            </Button>
+                          </Link>
                         </div>
                       </CardDescription>
                     </CardHeader>
