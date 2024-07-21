@@ -103,7 +103,7 @@ export default function TestSetting() {
         for (let i = 0; i < 10; i++) {
           // Use the same number of bars
           barHeight = dataArray[i] / 2;
-          canvasCtx.fillStyle = `white`;
+          canvasCtx.fillStyle = `green`;
           canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
           x += barWidth + 1;
         }

@@ -40,20 +40,31 @@ import confetti from "canvas-confetti";
 import useAxios from "@/context/useAxios";
 
 export default function MultiStepForm() {
-  const [step, setStep] = useState(1);
-  const [resume, setResume] = useState(null);
-  const [companyName, setCompanyName] = useState("");
-  const [jobDescription, setJobDescription] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [interviewType, setInterviewType] = useState("tech");
-  const { loading, error, fetchApi } = useAxios();
+  const [formState, setFormState] = useState({
+    step: 1,
+    resume: null,
+    company_name: '',
+    job_title: '',
+    job_description: '',
+    interview_date: new Date(),
+    interview_type: 'Technical'
+  })
+
+  const handleChange = (e) => {
+    setFormState({
+      ...formState,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const { error, fetchApi } = useAxios()
 
   const handleNextStep = async () => {
-    setStep((prevStep) => prevStep + 1)
+    handleChange({ target: { name: "step", value: formState.step + 1 } })
   }
 
   const handlePreviousStep = () => {
-    setStep((prevStep) => prevStep - 1);
+    handleChange({ target: { name: "step", value: formState.step - 1 } })
   };
 
   const handleSchedule = async () => {
@@ -62,7 +73,6 @@ export default function MultiStepForm() {
 
     const frame = () => {
       if (Date.now() > end) return;
-
       confetti({
         particleCount: 2,
         angle: 60,
@@ -79,20 +89,16 @@ export default function MultiStepForm() {
         origin: { x: 1, y: 0.5 },
         colors: colors,
       });
-
       requestAnimationFrame(frame);
     };
-    
-    if (!resume || !companyName || !jobDescription || !date || !interviewType) {
-      return
+
+    if (!formState.resume) {
+      alert("Please upload your resume");
+      return;
     }
-    
+
     const formData = new FormData()
-    formData.append("resume", resume)
-    formData.append("company_name", companyName)
-    formData.append("job_description", jobDescription)
-    formData.append("interview_date", new Date(date).toISOString())
-    formData.append("interview_type", interviewType)
+    
 
     const apiParams = {
       url: "/interview/schedule/",
@@ -112,9 +118,9 @@ export default function MultiStepForm() {
   return (
     <div>
       <main className="flex flex-col space-y-8 items-center justify-center h-screen">
-        <Stepper step={step} />
+        <Stepper step={formState.step} />
         <Card className="mx-auto w-full max-w-lg">
-          {step === 1 && (
+          {formState.step === 1 && (
             <>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap">
@@ -131,9 +137,10 @@ export default function MultiStepForm() {
                     <Label htmlFor="picture">Resume</Label>
                     <Input
                       id="picture"
+                      name="resume"
                       type="file"
                       className="cursor-pointer"
-                      onChange={(e) => setResume(e.target.files[0])}
+                      onChange={handleChange}
                     />
                   </div>
                   <Button className="w-full gap-4" onClick={handleNextStep}>
@@ -144,7 +151,7 @@ export default function MultiStepForm() {
             </>
           )}
 
-          {step === 2 && (
+          {formState.step === 2 && (
             <>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap">
@@ -160,15 +167,24 @@ export default function MultiStepForm() {
                   <div className="grid w-full gap-2">
                     <Input
                       type="text"
+                      name="company_name"
                       placeholder="Company Name"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
+                      value={formState.company_name}
+                      onChange={handleChange}
+                    />
+                    <Input
+                      type="text"
+                      name="job_title"
+                      placeholder="Job Title"
+                      value={formState.job_title}
+                      onChange={handleChange}
                     />
                     <Textarea
                       className="h-48"
+                      name="job_description"
                       placeholder="Paste your job description here"
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
+                      value={formState.job_description}
+                      onChange={handleChange}
                     />
                     <div className="flex justify-between">
                       <Button
@@ -187,7 +203,7 @@ export default function MultiStepForm() {
             </>
           )}
 
-          {step === 3 && (
+          {formState.step === 3 && (
             <>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
@@ -206,25 +222,25 @@ export default function MultiStepForm() {
                         variant={"outline"}
                         className={cn(
                           "w-full justify-start text-left font-normal",
-                          !date && "text-muted-foreground",
+                          !formState.interview_date && "text-muted-foreground",
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        {formState.interview_date ? format(formState.interview_date, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
                       <Calendar
                         mode="single"
-                        selected={date}
-                        onSelect={(date) => setDate(date)}
+                        selected={formState.interview_date}
+                        onSelect={(date) => handleChange({ target: { name: "interview_date", value: date }})}
                         initialFocus
                       />
                     </PopoverContent>
                   </Popover>
                   <RadioGroup
-                    defaultValue={interviewType}
-                    onValueChange={setInterviewType}
+                    defaultValue={formState.interview_type}
+                    onValueChange={(value) => {handleChange({ target: { name: "interview_type", value }})}} 
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="HR" id="r1" />

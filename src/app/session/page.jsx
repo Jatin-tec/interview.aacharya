@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 
-import { CirclePlus } from "lucide-react";
+import { CalendarClock, CirclePlay, CirclePlus } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -102,13 +102,21 @@ function SessionJoin() {
                 <CarouselItem>
                   <Card className="bg-accent">
                     <CardHeader>
-                      <CardTitle>{ interview.company_name } | { interview.interview_type } Round</CardTitle>
+                      <CardTitle>{interview.company_name} | {interview.interview_type} Round</CardTitle>
                       <CardDescription>
-                        { interview.job_title }
+                        {interview.job_title}
                         <p className="text-sm font-semibold my-2 rounded-md">
                           Date: 15, August 2024 | Time: 02:34 PM
                         </p>
-                        <Button>Start</Button>
+                        <div className="flex gap-2">
+                          <Button className="w-1/2">
+                            <CirclePlay className="w-4 h-4 mr-1" />
+                            Start
+                          </Button>
+                          <Button className="w-1/2" variant="outline">
+                            <CalendarClock className="w-4 h-4 mr-1" /> Reshedule
+                          </Button>
+                        </div>
                       </CardDescription>
                     </CardHeader>
                   </Card>
