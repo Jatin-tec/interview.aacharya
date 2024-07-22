@@ -58,6 +58,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "./ui/textarea";
 import TestSetting from "./testSetting";
+import { NavBarMenu } from "./navbarMenu";
 
 export function HeaderMain() {
   const { setTheme } = useTheme();
@@ -72,6 +73,7 @@ export function HeaderMain() {
           <Package2 className="h-6 w-6" />
           <span className="">Interview</span>
         </Link>
+        <NavBarMenu />
       </nav>
       <div className="flex flex-1 sm:flex-initial justify-end items-center gap-2 md:ml-auto md:gap-2 lg:gap-4">
         <CurrentDateTime />
