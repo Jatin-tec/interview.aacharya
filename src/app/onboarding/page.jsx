@@ -38,23 +38,59 @@ import {
 } from "@/components/ui/dialog";
 import confetti from "canvas-confetti";
 import useAxios from "@/context/useAxios";
+import { useToast } from "@/components/ui/use-toast"
+
 
 export default function MultiStepForm() {
-  const [step, setStep] = useState(1);
   const [resume, setResume] = useState(null);
-  const [companyName, setCompanyName] = useState("");
-  const [jobDescription, setJobDescription] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [interviewType, setInterviewType] = useState("tech");
-  const { loading, error, fetchApi } = useAxios();
+  const [formState, setFormState] = useState({
+    step: 1,
+    company_name: '',
+    job_title: '',
+    job_description: '',
+    interview_date: new Date(),
+    interview_type: 'Technical'
+  })
+
+  const handleChange = (e) => {
+    setFormState({
+      ...formState,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const { error, fetchApi } = useAxios()
+
+  const { toast } = useToast()
 
   const handleNextStep = async () => {
-    setStep((prevStep) => prevStep + 1)
+    if (!formValidator()) return
+    handleChange({ target: { name: "step", value: formState.step + 1 } })
   }
 
   const handlePreviousStep = () => {
-    setStep((prevStep) => prevStep - 1);
+    handleChange({ target: { name: "step", value: formState.step - 1 } })
   };
+
+  const formValidator = () => {
+    if (formState.step === 1 && !resume) {
+      toast({
+        variant: "destructive",
+        title: "Missing required fields",
+        description: "Please upload your resume",
+      });
+      return false
+    }
+    if (formState.step === 2 && !formState.company_name && !formState.job_title && !formState.job_description) {
+      toast({
+        variant: "destructive",
+        title: "Missing required fields",
+        description: "Please fill all the fields",
+      });
+      return false
+    }
+    return true
+  }
 
   const handleSchedule = async () => {
     const end = Date.now() + 3 * 1000; // 3 seconds
@@ -62,7 +98,6 @@ export default function MultiStepForm() {
 
     const frame = () => {
       if (Date.now() > end) return;
-
       confetti({
         particleCount: 2,
         angle: 60,
@@ -79,28 +114,22 @@ export default function MultiStepForm() {
         origin: { x: 1, y: 0.5 },
         colors: colors,
       });
-
       requestAnimationFrame(frame);
     };
-    
-    if (!resume || !companyName || !jobDescription || !date || !interviewType) {
-      return
-    }
-    
+
     const formData = new FormData()
     formData.append("resume", resume)
-    formData.append("company_name", companyName)
-    formData.append("job_description", jobDescription)
-    formData.append("interview_date", new Date(date).toISOString())
-    formData.append("interview_type", interviewType)
+    formData.append("company_name", formState.company_name)
+    formData.append("job_title", formState.job_title)
+    formData.append("job_description", formState.job_description)
+    formData.append("interview_date", new Date(formState.interview_date).toISOString())
+    formData.append("interview_type", formState.interview_type)
 
     const apiParams = {
       url: "/interview/schedule/",
       method: "POST",
       body: formData,
     };
-
-    console.log("apiParams", apiParams)
 
     const response = await fetchApi(apiParams)
 
@@ -112,9 +141,9 @@ export default function MultiStepForm() {
   return (
     <div>
       <main className="flex flex-col space-y-8 items-center justify-center h-screen">
-        <Stepper step={step} />
+        <Stepper step={formState.step} />
         <Card className="mx-auto w-full max-w-lg">
-          {step === 1 && (
+          {formState.step === 1 && (
             <>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap">
@@ -131,6 +160,7 @@ export default function MultiStepForm() {
                     <Label htmlFor="picture">Resume</Label>
                     <Input
                       id="picture"
+                      name="resume"
                       type="file"
                       className="cursor-pointer"
                       onChange={(e) => setResume(e.target.files[0])}
@@ -144,7 +174,7 @@ export default function MultiStepForm() {
             </>
           )}
 
-          {step === 2 && (
+          {formState.step === 2 && (
             <>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap">
@@ -160,15 +190,24 @@ export default function MultiStepForm() {
                   <div className="grid w-full gap-2">
                     <Input
                       type="text"
+                      name="company_name"
                       placeholder="Company Name"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
+                      value={formState.company_name}
+                      onChange={handleChange}
+                    />
+                    <Input
+                      type="text"
+                      name="job_title"
+                      placeholder="Job Title"
+                      value={formState.job_title}
+                      onChange={handleChange}
                     />
                     <Textarea
                       className="h-48"
+                      name="job_description"
                       placeholder="Paste your job description here"
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
+                      value={formState.job_description}
+                      onChange={handleChange}
                     />
                     <div className="flex justify-between">
                       <Button
@@ -187,7 +226,7 @@ export default function MultiStepForm() {
             </>
           )}
 
-          {step === 3 && (
+          {formState.step === 3 && (
             <>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
@@ -206,25 +245,25 @@ export default function MultiStepForm() {
                         variant={"outline"}
                         className={cn(
                           "w-full justify-start text-left font-normal",
-                          !date && "text-muted-foreground",
+                          !formState.interview_date && "text-muted-foreground",
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        {formState.interview_date ? format(formState.interview_date, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
                       <Calendar
                         mode="single"
-                        selected={date}
-                        onSelect={(date) => setDate(date)}
+                        selected={formState.interview_date}
+                        onSelect={(date) => handleChange({ target: { name: "interview_date", value: date }})}
                         initialFocus
                       />
                     </PopoverContent>
                   </Popover>
                   <RadioGroup
-                    defaultValue={interviewType}
-                    onValueChange={setInterviewType}
+                    defaultValue={formState.interview_type}
+                    onValueChange={(value) => {handleChange({ target: { name: "interview_type", value }})}} 
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="HR" id="r1" />

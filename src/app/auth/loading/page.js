@@ -16,7 +16,6 @@ const SocialAuth = () => {
 
   useEffect(() => {
     const code = location.get('code') ? location.get('code') : null;
-    console.log("code", code);
     if (code) {
       onGogglelogin();
     }
@@ -25,10 +24,8 @@ const SocialAuth = () => {
   const googleLoginHandler = async (code) => {
     try {
           const res = await axios.get(`${BACKEND_API_URL}/api/auth/login/google/?code=${code}`)
-          console.log("res", res)
           return res.data;
       } catch (err) {
-          console.log("error", err);
           return err;
       }
   };

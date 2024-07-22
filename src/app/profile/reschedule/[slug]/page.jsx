@@ -28,9 +28,31 @@ import {
 } from "@/components/ui/card";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Badge } from "@/components/ui/badge";
+import useAxios from "@/context/useAxios";
 
-export default function Schedule() {
+export default function Schedule({ params }) {
   const [date, setDate] = React.useState();
+
+  const rawCode = params.slug;
+  const code = params.slug.match(/.{1,3}/g) || [];
+  if (code.length !== 3 || code.some(part => part.length !== 3 || !/^[a-zA-Z0-9]+$/.test(part))) {
+    return <div>Invalid code format</div>;
+  }
+
+  const { loading, error, fetchApi } = useAxios();
+  const [interview, setInterview] = React.useState({});
+
+  React.useEffect(() => {
+    const apiParams = {
+      url: `/interview/detail/${rawCode}/`,
+      method: "GET",
+    };
+    fetchApi(apiParams).then((res) => {
+      if (res.status === 200) {
+        setInterview(res.data);
+      }
+    });
+  }, []);
 
   const handleClick = () => {
     const end = Date.now() + 3 * 1000; // 3 seconds
@@ -62,11 +84,13 @@ export default function Schedule() {
     frame();
   };
 
+  if (error?.response?.status === 404) return <div>Interview not found</div>;
+
   return (
     <>
       <HeaderMain />
       <main className="flex flex-col space-y-8 items-center justify-center h-screen">
-        <Card className="mx-auto w-full max-w-lg">
+        {interview && <Card className="mx-auto w-full max-w-lg">
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2">
               <CalendarClock /> Reschedule Interview
@@ -77,13 +101,16 @@ export default function Schedule() {
             </CardDescription>
             <Card className="bg-accent">
               <CardHeader>
-                <CardTitle>Google | Tech/Coding Round</CardTitle>
+                <CardTitle>{interview.company_name} | {interview.interview_type} Round</CardTitle>
                 <CardDescription>
-                  Software Development Engineer <br /> Date: 15, August 2024 |
+                  {interview.job_title} <br /> Date: 15, August 2024 |
                   Time: 02:34 PM
                   <p className="text-sm font-semibold my-2 gap-1 flex items-center rounded-md">
                     Interview ID:
-                    <Badge>a2b-g77-h71</Badge>
+                    <Badge>{code.map((block, index) => {
+                      if (index === 2) return <span key={index} className="text-xs">{block}</span>
+                      return <span key={index} className="text-xs">{block}-</span>
+                    })}</Badge>
                   </p>
                 </CardDescription>
               </CardHeader>
@@ -108,7 +135,6 @@ export default function Schedule() {
               </RadioGroup>
               <Dialog>
                 <DialogTrigger>
-                  hello
                   <Link href="#" onClick={handleClick}>
                     <Button className="w-full gap-2">
                       <TicketPlus />
@@ -132,7 +158,7 @@ export default function Schedule() {
               </Dialog>
             </div>
           </CardContent>
-        </Card>
+        </Card>}
       </main>
     </>
   );
