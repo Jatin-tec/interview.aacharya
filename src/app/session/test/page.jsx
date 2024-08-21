@@ -36,7 +36,7 @@ export default function Session() {
                 30:47 mins
               </span>
             </div>
-            <div className="relative  rounded-2xl shadow overflow-hidden m-5">
+            <div className="relative  rounded-2xl shadow border border-white overflow-hidden m-5">
               <video
                 autoPlay
                 playsInline

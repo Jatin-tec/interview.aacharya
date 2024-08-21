@@ -98,7 +98,7 @@ function CodeBlock() {
               <SheetTitle>Coding Arena</SheetTitle>
             </SheetHeader>
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <Button variant="outline">
                   Language :
                   <strong className="uppercase mx-1">{language}</strong>

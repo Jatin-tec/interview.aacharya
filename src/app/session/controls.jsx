@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +17,76 @@ import {
   Volume2Icon,
 } from "lucide-react";
 import CodeBlock from "./code";
+
+import { useState, useEffect } from "react";
+
+export function PushToTalk() {
+  const [recording, setRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioChunks, setAudioChunks] = useState([]);
+
+  useEffect(() => {
+    if (!navigator.mediaDevices) return;
+
+    // Request microphone access and setup MediaRecorder
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      const recorder = new MediaRecorder(stream);
+      setMediaRecorder(recorder);
+
+      recorder.ondataavailable = (event) => {
+        setAudioChunks((prev) => [...prev, event.data]);
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+        // Send audioBlob to backend or process it as needed
+      };
+    });
+
+    const handleKeyDown = (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (!recording) {
+          setRecording(true);
+          mediaRecorder.start();
+        }
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (recording) {
+          setRecording(false);
+          mediaRecorder.stop();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [mediaRecorder, recording, audioChunks]);
+
+  return (
+    <>
+      <Button
+        size="icon"
+        className="rounded-full px-2 w-full text-md text-current font-semibold bg-red-600 hover:bg-white border-2 border-transparent hover:border-2 hover:text-red-500 hover:border-red-500 gap-1.5"
+      >
+        <span className="relative flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-100 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-red-200"></span>
+        </span>
+        {recording ? "Listening..." : "Press Space to Talk"}
+      </Button>
+    </>
+  );
+}
 
 export default function Controls() {
   return (
@@ -44,15 +116,6 @@ export default function Controls() {
               <p>Mic Off</p>
             </TooltipContent>
           </Tooltip>
-          <Button
-            size="icon"
-            className="rounded-full text-md font-semibold bg-red-600 hover:bg-white border-2 border-transparent hover:border-2 hover:text-red-500 hover:border-red-500 gap-1.5"
-          >
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-100 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-200"></span>
-            </span>
-          </Button>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -81,6 +144,7 @@ export default function Controls() {
               <p>Report Bug</p>
             </TooltipContent>
           </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <CodeBlock />
@@ -90,6 +154,7 @@ export default function Controls() {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+        <PushToTalk />
       </div>
     </div>
   );

@@ -39,19 +39,17 @@ function SessionJoin() {
 
   const [upcommingInterviews, setUpcommingInterviews] = React.useState([]);
 
-
   React.useEffect(() => {
     const apiParams = {
       url: "/interview/schedule/",
       method: "GET",
-    }
+    };
     fetchApi(apiParams).then((res) => {
       if (res.status === 200) {
-        setUpcommingInterviews(res.data)
+        setUpcommingInterviews(res.data);
       }
-    })
+    });
   }, []);
-
 
   return (
     <div className="h-screen w-full">
@@ -98,33 +96,40 @@ function SessionJoin() {
           <span className="text-xl font-bold">Upcoming Interviews</span>
           <Carousel>
             <CarouselContent>
-              {upcommingInterviews && upcommingInterviews.map((interview) => (
-                <CarouselItem>
-                  <Card className="bg-accent">
-                    <CardHeader>
-                      <CardTitle>{interview.company_name} | {interview.interview_type} Round</CardTitle>
-                      <CardDescription>
-                        {interview.job_title}
-                        <p className="text-sm font-semibold my-2 rounded-md">
-                          Date: 15, August 2024 | Time: 02:34 PM
-                        </p>
-                        <div className="flex gap-2">
-                          <Button className="w-1/2">
-                            <CirclePlay className="w-4 h-4 mr-1" />
-                            Start
-                          </Button>
-                          <Link href={`/profile/reschedule/${interview.interview_code}`}>
-                            <Button className="w-1/2" variant="outline" >
-                              <CalendarClock className="w-4 h-4 mr-1" />
-                              Reshedule
+              {upcommingInterviews &&
+                upcommingInterviews.map((interview) => (
+                  <CarouselItem>
+                    <Card className="bg-accent">
+                      <CardHeader>
+                        <CardTitle>
+                          {interview.company_name} | {interview.interview_type}{" "}
+                          Round
+                        </CardTitle>
+                        <CardDescription>
+                          {interview.job_title}
+                          <p className="text-sm font-semibold my-2 rounded-md">
+                            Date: 15, August 2024 | Time: 02:34 PM
+                          </p>
+                          <div className="flex gap-2">
+                            <Button className="w-1/2">
+                              <CirclePlay className="w-4 h-4 mr-1" />
+                              Start
                             </Button>
-                          </Link>
-                        </div>
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </CarouselItem>
-              ))}
+
+                            <Button className="w-1/2" variant="outline">
+                              <Link
+                                href={`/profile/reschedule/${interview.interview_code}`}
+                              >
+                                <CalendarClock className="w-4 h-4 mr-1" />
+                                Reshedule
+                              </Link>
+                            </Button>
+                          </div>
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  </CarouselItem>
+                ))}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
@@ -162,4 +167,4 @@ function SessionJoin() {
   );
 }
 
-export default SessionJoin
+export default SessionJoin;
